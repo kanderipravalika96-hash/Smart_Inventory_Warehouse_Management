@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Inventory & Warehouse Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+        }
+
+        .header {
+            background-color: #1f2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            flex: 1;
+            min-width: 180px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 10px 0;
+        }
+
+        .section {
+            background: white;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #e5e7eb;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            background-color: #fff3cd;
+        }
+
+        .buttons {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 5px;
+            text-decoration: none;
+            color: white;
+            background-color: #2563eb;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Smart Inventory & Warehouse Management</h1>
+    <p>Inventory Management Dashboard</p>
+</div>
+
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Products</h3>
+            <h2>{{ total_products }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Stock</h3>
+            <h2>{{ total_stock }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Low Stock</h3>
+            <h2>{{ low_stock|length }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Out of Stock</h3>
+            <h2>{{ out_of_stock|length }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Inventory Value</h3>
+            <h2>₹{{ "%.2f"|format(inventory_value) }}</h2>
+        </div>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Inventory Status</h2>
+
+        <table>
+
+            <tr>
+                <th>Product</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+
+            {% for product in products %}
+
+            <tr>
+
+                <td>{{ product.name }}</td>
+
+                <td>{{ product.quantity }}</td>
+
+                <td>₹{{ product.price }}</td>
+
+                <td>
+
+                    {% if product.quantity == 0 %}
+
+                        Out of Stock
+
+                    {% elif product.quantity <= 10 %}
+
+                        Low Stock
+
+                    {% else %}
+
+                        Available
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Stock Alerts</h2>
+
+        {% if reorder_products %}
+
+            {% for product in reorder_products %}
+
+            <div class="alert">
+
+                <strong>⚠ LOW STOCK ALERT!</strong>
+
+                <p>
+                    Product:
+                    <strong>{{ product.name }}</strong>
+                </p>
+
+                <p>
+                    Available Quantity:
+                    <strong>{{ product.quantity }}</strong>
+                </p>
+
+                <p>
+                    Recommended Reorder Quantity:
+                    <strong>{{ product.reorder_quantity }}</strong>
+                </p>
+
+                <p>
+                    Recommended Action:
+                    <strong>Reorder the product.</strong>
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No low stock products.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Navigation Buttons -->
+
+    <div class="buttons">
+
+        <a href="/add" class="button">
+            ➕ Add Product
+        </a>
+
+        <a href="/products" class="button">
+            📦 Manage Inventory
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

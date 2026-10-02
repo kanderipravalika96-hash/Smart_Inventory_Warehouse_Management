@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Products</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #e5e7eb;
+        }
+
+        .low {
+            font-weight: bold;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        .links {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .links a {
+            display: inline-block;
+            padding: 12px 18px;
+            margin: 5px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Inventory Products</h1>
+    <p>Manage your warehouse inventory</p>
+</div>
+
+<div class="container">
+
+    <form method="GET" action="/products">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search product..."
+            value="{{ search }}"
+        >
+
+        <button type="submit">🔍 Search</button>
+
+    </form>
+
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Stock In</th>
+            <th>Stock Out</th>
+            <th>Delete</th>
+        </tr>
+
+
+        {% for product in products %}
+
+        <tr>
+
+            <td>{{ product.id }}</td>
+
+            <td>{{ product.name }}</td>
+
+            <td>{{ product.quantity }}</td>
+
+            <td>₹{{ product.price }}</td>
+
+            <td>
+
+                {% if product.quantity == 0 %}
+
+                    Out of Stock
+
+                {% elif product.quantity <= 10 %}
+
+                    <span class="low">⚠ Low Stock</span>
+
+                {% else %}
+
+                    Available
+
+                {% endif %}
+
+            </td>
+
+
+            <td class="actions">
+
+                <form
+                    action="/stock-in/{{ product.id }}"
+                    method="POST"
+                >
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        min="1"
+                        placeholder="Qty"
+                        required
+                    >
+
+                    <button type="submit">➕</button>
+
+                </form>
+
+            </td>
+
+
+            <td class="actions">
+
+                <form
+                    action="/stock-out/{{ product.id }}"
+                    method="POST"
+                >
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        min="1"
+                        placeholder="Qty"
+                        required
+                    >
+
+                    <button type="submit">➖</button>
+
+                </form>
+
+            </td>
+
+
+            <td>
+
+                <a
+                    href="/delete/{{ product.id }}"
+                    onclick="return confirm('Delete this product?')"
+                >
+                    🗑 Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+    <div class="links">
+
+        <a href="/add">
+            ➕ Add New Product
+        </a>
+
+        <a href="/">
+            🏠 Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
